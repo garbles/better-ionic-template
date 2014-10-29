@@ -8,9 +8,11 @@ var gulp = require('gulp'),
   inject = require('gulp-inject'),
   plumber = require('gulp-plumber');
 
-var buildPaths = {};
+var buildPaths = { all: [] };
 ['scss', 'coffee', 'slim'].forEach(function (ext) {
-  buildPaths[ext] = ['./src/*.' + ext, './src/**/*.' + ext];
+  var paths = ['./src/*.' + ext, './src/**/*.' + ext];
+  buildPaths[ext] = paths;
+  buildPaths.all = buildPaths.all.concat(paths);
 });
 
 function buildTask (ext, compileStream) {
