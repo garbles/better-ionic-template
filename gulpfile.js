@@ -14,7 +14,7 @@ var paths = {
   coffee: ['./scripts/*.coffee', './scripts/**/*.coffee'],
   slim: ['./templates/*.slim', './templates/**/*.slim']
 };
-paths.all = (paths.sass).concat(paths.coffee);
+paths.all = (paths.sass).concat(paths.coffee).concat(paths.slim);
 
 gulp.task('sass', function(done) {
   gulp.src(paths.sass)
