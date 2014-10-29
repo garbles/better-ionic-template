@@ -10,9 +10,9 @@ var gulp = require('gulp'),
   sh = require('shelljs');
 
 var paths = {
-  sass: ['./scss/*.scss', './scss/**/*.scss'],
-  coffee: ['./scripts/*.coffee', './scripts/**/*.coffee'],
-  slim: ['./templates/*.slim', './templates/**/*.slim']
+  sass: ['./src/*.scss', './src/**/*.scss'],
+  coffee: ['./src/*.coffee', './src/**/*.coffee'],
+  slim: ['./src/*.slim', './src/**/*.slim']
 };
 paths.all = (paths.sass).concat(paths.coffee).concat(paths.slim);
 
@@ -21,7 +21,7 @@ gulp.task('sass', function(done) {
     .pipe(plumber())
     .pipe(watch(paths.sass))
     .pipe(sass())
-    .pipe(gulp.dest('./www/css'))
+    .pipe(gulp.dest('./www'))
     .on('end', done);
 });
 
@@ -30,7 +30,7 @@ gulp.task('coffee', function(done) {
     .pipe(plumber())
     .pipe(watch(paths.coffee))
     .pipe(coffee())
-    .pipe(gulp.dest('./www/js'))
+    .pipe(gulp.dest('./www'))
     .on('end', done);
 });
 
