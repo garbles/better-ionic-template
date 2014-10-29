@@ -5,10 +5,16 @@ var gulp = require('gulp'),
   coffee = require('gulp-coffee'),
   slim = require('gulp-slim'),
   watch = require('gulp-watch'),
+  inject = require('gulp-inject'),
   plumber = require('gulp-plumber');
 
+var buildPaths = {};
+['scss', 'coffee', 'slim'].forEach(function (ext) {
+  buildPaths[ext] = ['./src/*.' + ext, './src/**/*.' + ext];
+});
+
 function buildTask (ext, compileStream) {
-  var paths = ['./src/*.' + ext, './src/**/*.' + ext];
+  var paths = buildPaths[ext];
 
   gulp.task(ext, function (done) {
     gulp.src(paths)
