@@ -1,5 +1,5 @@
 angular
-  .module 'choch', ['ionic']
+  .module 'app', ['ionic']
   .run $ionicPlatform ->
     $ionicPlatform.ready ->
       if window.cordova && window.cordova.plugins.Keyboard
