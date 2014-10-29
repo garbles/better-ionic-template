@@ -4,15 +4,15 @@ var gulp = require('gulp'),
   concat = require('gulp-concat'),
   sass = require('gulp-sass'),
   coffee = require('gulp-coffee'),
-  minifyCss = require('gulp-minify-css'),
-  rename = require('gulp-rename'),
+  slim = require('gulp-slim'),
   watch = require('gulp-watch'),
   plumber = require('gulp-plumber'),
   sh = require('shelljs');
 
 var paths = {
   sass: ['./scss/*.scss', './scss/**/*.scss'],
-  coffee: ['./scripts/*.coffee', './scripts/**/*.coffee']
+  coffee: ['./scripts/*.coffee', './scripts/**/*.coffee'],
+  slim: ['./templates/*.slim', './templates/**/*.slim']
 };
 paths.all = (paths.sass).concat(paths.coffee);
 
@@ -34,4 +34,15 @@ gulp.task('coffee', function(done) {
     .on('end', done);
 });
 
-gulp.task('watch', ['sass', 'coffee']);
+gulp.task('slim', function(done) {
+  gulp.src(paths.slim)
+    .pipe(plumber())
+    .pipe(watch(paths.slim))
+    .pipe(slim({
+      options: ['disable_escape=true', 'logic_less=true']
+    }))
+    .pipe(gulp.dest('./www'))
+    .on('end', done);
+});
+
+gulp.task('watch', ['sass', 'coffee', 'slim']);
