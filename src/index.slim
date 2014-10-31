@@ -5,13 +5,19 @@ html
     meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"
     title
 
-    /! will not change
+    /! ionic
     link href="lib/ionic/css/ionic.css" rel="stylesheet"
     script src="lib/ionic/js/ionic.bundle.js"
     script src="cordova.js"
 
+    /! inject:css
+    /! endinject
+
+    /! inject:js
+    /! endinject
+
     link href="styles/ionic.app.css" rel="stylesheet"
-    script src="scripts/app.js"
+    script src="app.js"
   body ng-app="app"
     ion-pane
       ion-content
