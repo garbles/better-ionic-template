@@ -8,7 +8,6 @@ var gulp = require('gulp'),
   plumber = require('gulp-plumber'),
   del = require('del');
 
-var ignorePaths = ['!./www/lib/**/*', '!./www/lib/*'];
 var srcPaths = { all: [] };
 ['scss', 'coffee', 'slim'].forEach(function (ext) {
   var paths = ['./src/*.' + ext, './src/**/*.' + ext];
@@ -22,26 +21,28 @@ var buildPaths = { all: [] };
   buildPaths[ext] = paths;
   buildPaths.all = buildPaths.all.concat(paths);
 });
-buildPaths.all = buildPaths.all.concat(ignorePaths);
+buildPaths.ignore = ['!./www/lib/**/*', '!./www/lib/*'];
+buildPaths.all = buildPaths.all.concat(buildPaths.ignore);
+buildPaths.assets = buildPaths.js.concat(buildPaths.css).concat(buildPaths.ignore);
 
 function buildTask (ext, buildExt, compiles) {
-  var paths = srcPaths[ext],
-    build = buildPaths[buildExt].concat(ignorePaths);
+  var src = srcPaths[ext],
+    build = buildPaths[buildExt].concat(buildPaths.ignore);
 
   gulp.task(ext + '-clean', function (done) {
     del(build, done);
   });
 
   gulp.task(ext, [ext + '-clean'], function () {
-    return gulp.src(paths)
+    return gulp.src(src)
       .pipe(plumber())
       .pipe(compiles)
       .pipe(gulp.dest('./www'));
   });
 
   gulp.task(ext + '-watch', [ext + '-clean'], function() {
-    return gulp.src(paths)
-      .pipe(watch(paths))
+    return gulp.src(src)
+      .pipe(watch(src))
       .pipe(plumber())
       .pipe(compiles)
       .pipe(gulp.dest('./www'));
@@ -54,14 +55,18 @@ buildTask('slim', 'html', slim({ options: ['disable_escape=true', 'logic_less=tr
 
 gulp.task('build', ['scss', 'coffee', 'slim']);
 gulp.task('clean', ['scss-clean', 'coffee-clean', 'slim-clean']);
-gulp.task('watch', ['scss-watch', 'coffee-watch', 'slim-watch']);
+gulp.task('watch', ['scss-watch', 'coffee-watch', 'slim-watch', 'inject-watch']);
 
 gulp.task('inject', function () {
   return gulp.src('./www/index.html')
-    .pipe(inject(gulp.src(buildPaths.all, { read: false }), {
+    .pipe(inject(gulp.src(buildPaths.assets, { read: false }), {
       relative: true,
       starttag: '<!--inject:{{ext}}-->', // slim removes outer spaces in comments
       endtag: '<!--endinject-->'
     }))
     .pipe(gulp.dest('./www'));
+});
+
+gulp.task('inject-watch', function () {
+  gulp.watch(buildPaths.assets, ['inject']);
 });
