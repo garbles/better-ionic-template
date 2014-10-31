@@ -25,10 +25,10 @@ function buildTask (ext, compileStream) {
       .on('end', done);
   });
 
-  gulp.task(ext + '-watch', [ext], function(done) {
+  gulp.task(ext + '-watch', function(done) {
     gulp.src(paths)
-      .pipe(plumber())
       .pipe(watch(paths))
+      .pipe(plumber())
       .pipe(compileStream)
       .pipe(gulp.dest('./www'))
       .on('end', done);
@@ -39,5 +39,5 @@ buildTask('scss', sass());
 buildTask('coffee', coffee());
 buildTask('slim', slim({ options: ['disable_escape=true', 'logic_less=true'] }));
 
+gulp.task('build', ['scss', 'coffee', 'slim']);
 gulp.task('watch', ['scss-watch', 'coffee-watch', 'slim-watch']);
-gulp.task('build', ['scss', 'coffee', 'slim'])
