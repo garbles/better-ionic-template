@@ -1,6 +1,5 @@
 var gulp = require('gulp'),
   gutil = require('gulp-util'),
-  bower = require('bower'),
   sass = require('gulp-sass'),
   coffee = require('gulp-coffee'),
   slim = require('gulp-slim'),
@@ -9,6 +8,7 @@ var gulp = require('gulp'),
   plumber = require('gulp-plumber'),
   del = require('del');
 
+var ignorePaths = ['!./www/lib/**/*', '!./www/lib/*'];
 var srcPaths = { all: [] };
 ['scss', 'coffee', 'slim'].forEach(function (ext) {
   var paths = ['./src/*.' + ext, './src/**/*.' + ext];
@@ -22,11 +22,11 @@ var buildPaths = { all: [] };
   buildPaths[ext] = paths;
   buildPaths.all = buildPaths.all.concat(paths);
 });
-buildPaths.all = buildPaths.all.concat(['!./www/lib/']);
+buildPaths.all = buildPaths.all.concat(ignorePaths);
 
 function buildTask (ext, buildExt, compiles) {
   var paths = srcPaths[ext],
-    build = buildPaths[buildExt];
+    build = buildPaths[buildExt].concat(ignorePaths);
 
   gulp.task(ext + '-clean', function (done) {
     del(build, done);
@@ -59,7 +59,9 @@ gulp.task('watch', ['scss-watch', 'coffee-watch', 'slim-watch']);
 gulp.task('inject', function () {
   return gulp.src('./www/index.html')
     .pipe(inject(gulp.src(buildPaths.all, { read: false }), {
-      relative: true
+      relative: true,
+      starttag: '<!--inject:{{ext}}-->', // slim removes outer spaces in comments
+      endtag: '<!--endinject-->'
     }))
     .pipe(gulp.dest('./www'));
 });
